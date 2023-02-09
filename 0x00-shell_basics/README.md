@@ -1,1 +1,1 @@
-script that prints the absolute path name of the current working directory
+‘This repository contains solutions to shell tasks’
