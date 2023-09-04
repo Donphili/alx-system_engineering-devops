@@ -1,24 +1,21 @@
 #!/usr/bin/env bash
-# A bash script which installs and configures HAproxy to distribute requests using round robin
+# configures a new HAproxy as a load balancer
 
-sudo apt-get -y update
-sudo apt-get -y upgrade
-sudo apt-get -y install haproxy
-sudo sed -i '11i ENABLED=1' /etc/default/haproxy
+# Install HAproxy on a server
+apt-get -y update
+apt-get -y install haproxy=1.6.\*
 
-HA_PROXY_RR_CONFIG=\
-"
-backend victorilodiuba.tech-backend
-	balance roundrobin
-	server 35243-web-01 3.235.25.172:80 check
-	server 35243-web-02 54.164.176.89:80 check
-frontend victorilodiuba.tech-frontend
-	bind *:80
-	mode http
-	default_backend victorilodiuba.tech-backend
-"
-touch haproxy.cfg
-sudo cp /etc/haproxy/haproxy.cfg haproxy.cfg
-echo -e "$HA_PROXY_RR_CONFIG" >> haproxy.cfg
-sudo mv haproxy.cfg /etc/haproxy/haproxy.cfg
-sudo service haproxy start
+# Configure haproxy configuration file to distribute requests using a roundrobin algorithm
+echo '
+frontend sammykingx.tech
+        bind 0:80
+        default_backend web_servers
+
+backend web_servers
+        balance roundrobin
+        server 64820-web-01 100.26.152.157:80
+        server 64820-web-02 52.86.102.6:80
+' >> /etc/haproxy/haproxy.cfg
+
+# Restart HAproxy service
+service haproxy restart
