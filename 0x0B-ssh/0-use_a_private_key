@@ -1,4 +1,3 @@
 #!/usr/bin/env bash
-# Bash_script_that using ssh to_connect to server using_the_private
-# key ~/.ssh/school with_the user_ubuntu
-ssh ubuntu@52.86.203.201 -i ~/.ssh/school
+# connects to a server using ssh
+ssh -i ~/.ssh/school ubuntu@52.3.255.118
