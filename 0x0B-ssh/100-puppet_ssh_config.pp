@@ -1,4 +1,4 @@
-# Sets up a client SSH configuration file so that we can connect to a server without using a password
+# ssh config with puppet
 include stdlib
 file_line { 'Declare identity file':
   path    => '/etc/ssh/ssh_config',
