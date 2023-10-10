@@ -2,49 +2,51 @@
 """Top ten"""
 import requests
 
-def count_words(subreddit, word_list):
-    word_counts = {word: 0 for word in word_list}
-    after = None
 
-    while True:
-        url = f"https://www.reddit.com/r/{subreddit}/hot.json"
-        headers = {'user-agent': 'MyAPI/0.0.1'}
-        params = {'after': after, 'limit': 100}  # Increase 'limit' for more posts
+def count_words(subreddit, word_list, after="", word_dic={}):
+    """Return a list of titles of all hot articles"""
+    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
+    headers = {'user-agent': 'MyAPI/0.0.1'}
+    params = {'after': after}
 
-        try:
-            response = requests.get(url, headers=headers, params=params)
-            response.raise_for_status()
+    if not word_dic:
+        for word in word_list:
+            word_dic[word] = 0
 
-            data = response.json().get('data')
-            if not data:
-                print("No data found. Check the subreddit name.")
-                return
+    if after is None:
+        word_list = [[key, value] for key, value in word_dic.items()]
+        word_list = sorted(word_list, key=lambda x: (-x[1], x[0]))
+        for w in word_list:
+            if w[1]:
+                print("{}: {}".format(w[0].lower(), w[1]))
+        return None
 
-            after = data.get('after')
-            children = data.get('children')
+    r = requests.get(url, headers=headers, params=params,
+                     allow_redirects=False)
 
-            for child in children:
-                title = child['data']['title'].lower()
-                for word in word_list:
-                    word_counts[word] += title.split().count(word.lower())
+    if r.status_code != 200:
+        return None
 
-            if after is None:
-                break
+    try:
+        js = r.json()
 
-        except requests.exceptions.RequestException as e:
-            print("Request error:", e)
-            return
-        except ValueError:
-            print("JSON parsing error")
-            return
+    except ValueError:
+        return None
 
-    sorted_word_counts = sorted(word_counts.items(), key=lambda x: (-x[1], x[0]))
-    for word, count in sorted_word_counts:
-        if count:
-            print(f"{word}: {count}")
+    try:
 
-# Example usage:
-subreddit = "learnprogramming"
-word_list = ["python", "programming"]
-count_words(subreddit, word_list)
+        data = js.get("data")
+        after = data.get("after")
+        children = data.get("children")
+        for child in children:
+            post = child.get("data")
+            title = post.get("title")
+            lower = [s.lower() for s in title.split(' ')]
 
+            for w in word_list:
+                word_dic[w] += lower.count(w.lower())
+
+    except Exception as e:
+        return None
+
+    count_words(subreddit, word_list, after, word_dic)
