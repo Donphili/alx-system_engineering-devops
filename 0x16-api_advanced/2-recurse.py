@@ -1,29 +1,28 @@
 #!/usr/bin/python3
-"""
-    Holding the function recurse
-"""
-
-from requests import get
+"""Module for task 2"""
 
 
-def recurse(subreddit, hot_list=[], after=""):
-    """
-        Returns a list containing the titles of all hot articles
-        for a given subreddit.
-        Returns None if subreddit doesn't exist.
-    """
-    parameters = {"after": after}
-    header = {"User-Agent": "victornnamdii"}
-    result = get('https://www.reddit.com/r/{}/hot.json'.format(subreddit),
-                 headers=header, allow_redirects=False, params=parameters)
-    if result.status_code == 404:
+def recurse(subreddit, hot_list=[], count=0, after=None):
+    """Queries the Reddit API and returns all hot posts
+    of the subreddit"""
+    import requests
+
+    sub_info = requests.get("https://www.reddit.com/r/{}/hot.json"
+                            .format(subreddit),
+                            params={"count": count, "after": after},
+                            headers={"User-Agent": "My-User-Agent"},
+                            allow_redirects=False)
+    if sub_info.status_code >= 400:
         return None
 
-    after = result.json().get('data').get('after')
+    hot_l = hot_list + [child.get("data").get("title")
+                        for child in sub_info.json()
+                        .get("data")
+                        .get("children")]
 
-    for item in result.json().get('data').get('children'):
-        hot_list.append(item.get('data').get('title'))
+    info = sub_info.json()
+    if not info.get("data").get("after"):
+        return hot_l
 
-    if after is None:
-        return hot_list
-    return recurse(subreddit, hot_list, after)
+    return recurse(subreddit, hot_l, info.get("data").get("count"),
+                   info.get("data").get("after"))
