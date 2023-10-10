@@ -1,54 +1,50 @@
 #!/usr/bin/python3
-""" Functions to adcquire info from API Reddit"""
-from requests import get
-
+"""Top ten"""
+import requests
 
 def count_words(subreddit, word_list):
-    """Count the titles found with wordlist in subreddit"""
-    my_list = recurse(subreddit)
-    my_dict = {}
-    count = 0
+    word_counts = {word: 0 for word in word_list}
+    after = None
 
-    if my_list is not None:
-        for word in word_list:
-            my_dict[word] = 0
+    while True:
+        url = f"https://www.reddit.com/r/{subreddit}/hot.json"
+        headers = {'user-agent': 'MyAPI/0.0.1'}
+        params = {'after': after, 'limit': 100}  # Increase 'limit' for more posts
 
-        for title in my_list:
-            title_split = title.split(" ")
+        try:
+            response = requests.get(url, headers=headers, params=params)
+            response.raise_for_status()
 
-            for iter in title_split:
-                for iter_split in word_list:
-                    if iter.lower() == iter_split.lower():
-                        count = 1
-                        my_dict[iter_split] += 1
-        if count == 0:
+            data = response.json().get('data')
+            if not data:
+                print("No data found. Check the subreddit name.")
+                return
+
+            after = data.get('after')
+            children = data.get('children')
+
+            for child in children:
+                title = child['data']['title'].lower()
+                for word in word_list:
+                    word_counts[word] += title.split().count(word.lower())
+
+            if after is None:
+                break
+
+        except requests.exceptions.RequestException as e:
+            print("Request error:", e)
             return
-        for key, val in sorted(my_dict.items(),  key=lambda x: x[1],
-                               reverse=True):
-            if val != 0:
-                print("{}: {}".format(key, val))
-    else:
-        return
+        except ValueError:
+            print("JSON parsing error")
+            return
 
+    sorted_word_counts = sorted(word_counts.items(), key=lambda x: (-x[1], x[0]))
+    for word, count in sorted_word_counts:
+        if count:
+            print(f"{word}: {count}")
 
-def recurse(subreddit, hot_list=[], after=""):
-    """
-        Returns a list containing the titles of all hot articles
-        for a given subreddit.
-        Returns None if subreddit doesn't exist.
-    """
-    parameters = {"after": after}
-    header = {"User-Agent": "victornnamdii"}
-    result = get('https://www.reddit.com/r/{}/hot.json'.format(subreddit),
-                 headers=header, allow_redirects=False, params=parameters)
-    if result.status_code != 200:
-        return None
+# Example usage:
+subreddit = "learnprogramming"
+word_list = ["python", "programming"]
+count_words(subreddit, word_list)
 
-    after = result.json().get('data').get('after')
-
-    for item in result.json().get('data').get('children'):
-        hot_list.append(item.get('data').get('title'))
-
-    if after is None:
-        return hot_list
-    return recurse(subreddit, hot_list, after)
