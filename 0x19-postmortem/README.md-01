@@ -1,0 +1,83 @@
+#MY REVISED POST-MORTEM , FOR  MY READERS😊😁:
+
+Step 1: INCIDENT
+
+Title: "When Our Website Decided to Take a 4-Hour Coffee Break"
+
+Step 2: Duration
+
+The website enjoyed an unplanned siesta from 2:00 PM to 6:00 PM (WAT) on October 9th, 2021.
+
+Impact
+
+Imagine a party where 90% of the guests were locked out – that's what happened to our users. The website was MIA, causing chaos.
+
+Root Cause
+
+So, why the no-show? Turns out, our trusty database server threw a hissy fit.
+
+**Step 3: Timeline Events**
+
+[2:00 PM (WAT)] - Monitoring alerts spike 🔴
+   |
+[2:15 PM (WAT)] - Engineers in action 💪
+   |
+[2:30 PM (WAT)] - Network issue suspected 🌐
+   |   |
+   |--- [3:00 PM (WAT)] - Network ruled out ❌
+   |   |
+   |--- [4:00 PM (WAT)] - Database server failure confirmed 💥
+   |
+[4:30 PM (WAT)] - Database maintenance team on the scene 🦸‍♂️
+   |
+[6:00 PM (WAT)] - Crisis resolved, server restarted 🚀
+
+
+
+2:00 PM (WAT): "SOS!" Monitoring alerts went bonkers with a spike in errors.
+
+2:15 PM (WAT): Our fearless engineers sprang into action, like superheroes in capes.
+
+2:30 PM (WAT): The hunt for the villain began – initially, we thought it was the network, but alas, it wasn't.
+
+3:00 PM (WAT): We pointed fingers at the database. Blame game in progress.
+
+4:00 PM (WAT): Verdict – database server in a coma.
+
+4:30 PM (WAT): Distress signal sent to the database maintenance team. They brought their defibrillator.
+
+6:00 PM (WAT): Crisis averted! Database server CPR worked, and the website was back on its feet.
+
+Step 4: Root Cause and Resolution
+
+So, what happened? Our trusty database server had a wardrobe malfunction. The storage subsystem failed, leading to data corruption. It needed a makeover.
+
+Resolution
+
+Our database maintenance team worked their magic – replaced the faulty parts, did a bit of data rehab, and restarted the server. Website: Back in action!
+
+Step 5: Corrective and Preventative Measures
+
+Detective Database: We're getting Sherlock Holmes-level monitoring to catch hardware failures early.
+
+Backup Buddy: Implement a sidekick – a redundant database server for emergencies.
+
+Backup Auditions: We're hosting regular backup auditions to ensure reliability.
+
+Emergency Manual: Documented the incident response process for a faster rescue mission.
+
+What We Learned
+
+Moral of the story: Even tech needs a coffee break sometimes. But we're better prepared now to handle its caffeine cravings. 😄
+
+User Impact
+
+During the downtime, users turned into amateur detectives trying to figure out what went wrong. Some even started chanting "Server! Server!" like it was a sports game.
+
+
+Quote of the Day
+
+As one of our team members, Don, put it: "I've seen coffee breaks, but this was one for the IT history books!"
+
+We're all back on track now, and our website is up and running, thanks to our superhero tech team!
+
