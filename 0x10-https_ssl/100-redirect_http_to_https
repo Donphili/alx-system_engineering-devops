@@ -36,22 +36,13 @@ defaults
 
 frontend http_front
    bind *:80
-   mode http
-   default_back web-servers
-
-frontend http_front
    bind *:443 ssl crt /etc/letsencrypt/live/www.donp.tech/donp.tech.pem
    reqadd X-Forwarded-Proto:\ https
-   acl letsencrypt-acl path_beg /.well-known/acme-challenge/
-   use_backend letsencrypt-backend if letsencrypt-acl
    stats uri /haproxy?stats
    default_backend web-servers
 
 backend web-servers
-    redirect scheme https code 301 if !{ ssl_fc }
     balance roundrobin
-    server 296954-web-01 54.152.43.118 check
-    server 296954-web-02 54.82.136.87 check
-
-backend letsencrypt-backend
-   server letsencrypt 127.0.0.1:54321
+    redirect scheme https if !{ ssl_fc }
+    server 296954-web-01 3.85.16.215
+    server 296954-web-02 18.233.67.195
